@@ -1,4 +1,7 @@
 import Emitter from "./frameworkHL/observer/Emitter";
+import CommandsMonitor from "./frameworkHL/command/CommandsMonitor";
+import TestSayHiCMD from "./testmain/commands/TestSayHiCMD";
+import ChangeHelloWordCMD from "./testmain/commands/ChangeHelloWordCMD";
 
 const { ccclass, property } = cc._decorator;
 
@@ -28,17 +31,27 @@ export default class Helloworld extends cc.Component {
 
         const self = this;
         this.scheduleOnce(()=>{
-            self.callTest();
+            // self.callTestEmitter();
+            self.delayTestCommands();
         }, 1);
     }
+
+    private delayTestCommands():void {
+        const monitor = this.node.getComponentInChildren(CommandsMonitor);
+        if (monitor) {
+            monitor.execute(TestSayHiCMD);
+
+            const lb = this.node.getComponentInChildren(cc.Label);
+            monitor.execute(ChangeHelloWordCMD, lb);
+        }
+    }
     
-    private callTest():void {
+    private callTestEmitter():void {
         //---test
         Global.Emitter = new Emitter();
     
         Global.Emitter.on(this, EVENTS.TEST_SAY, this.testSayHiA);
         Global.Emitter.on(this, EVENTS.TEST_2, this.testSayHiB);
-        //console.log();//Global.Emitter.listeners
         
         Global.Emitter.off(this, EVENTS.TEST_SAY, this.testSayHiA);
         Global.Emitter.on(this, EVENTS.TEST_SAY, this.testSayHiA);

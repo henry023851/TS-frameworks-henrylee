@@ -1,10 +1,17 @@
 import IObserver from "../interface/IObserver";
 
+/**
+ * Observer
+ * 主要用途：观察者
+ * @author henry lee
+ * @date 2020.04.03   create
+ */
 export default class Observer implements IObserver {
     private _context: any = null;
     private _name: number | string = null;
     private _func: Function = null;
 
+    /**请使用create方法来创建Observer */
     public static create(context: any, name: number | string, func: Function): Observer {
         let observer = new Observer();
         observer._name = name;
