@@ -9,7 +9,7 @@ type KEYS_UNION = string | number;
  * @date 2020.4.3
  * 
  */
-export default class StrictMap<U> implements IDestroyable {
+export default class StrictMap<U extends IDestroyable> implements IDestroyable {
 
     private _valDic: { [key in KEYS_UNION]: U } = null;
 
@@ -54,10 +54,16 @@ export default class StrictMap<U> implements IDestroyable {
      * 清空所有键值对
      */
     public clear(): void {
+        for (const key in this._valDic) {
+            if (this._valDic.hasOwnProperty(key)) {
+                this._valDic[key].destroy();
+            }
+        }
         this._valDic = {};
     }
 
     public destroy(): void {
+        this.clear();
         this._valDic = null;
     }
 }
