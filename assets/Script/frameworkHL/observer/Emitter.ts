@@ -57,9 +57,9 @@ export default class Emitter implements IDestroyable {
         if (!observers) return;
 
         //遍历过程中如果有插入和删除操作，会造成逻辑混乱，所以复制一份
-        const temp: IObserver[] = observers.concat();
-        temp.forEach(element => {
-            element.execute(params);
+        const arr: IObserver[] = observers.concat();
+        arr.forEach(observer => {
+            observer.execute(params);
         });
     }
 
@@ -67,8 +67,8 @@ export default class Emitter implements IDestroyable {
         for (const key in this.listeners) {
             if (this.listeners.hasOwnProperty(key)) {
                 const arr: IObserver[] = this.listeners[key];
-                arr.forEach(element => {
-                    element.destroy();
+                arr.forEach(observer => {
+                    observer.destroy();
                 });
             }
         }
