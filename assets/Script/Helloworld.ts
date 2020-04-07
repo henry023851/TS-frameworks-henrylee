@@ -27,17 +27,18 @@ export default class Helloworld extends cc.Component {
     start() {
         // init logic
         this.label.string = this.text;
-        
+
 
         const self = this;
-        this.scheduleOnce(()=>{
+        this.scheduleOnce(() => {
             // self.callTestEmitter();
             self.delayTestCommands();
         }, 1);
     }
 
-    private delayTestCommands():void {
+    private delayTestCommands(): void {
         const monitor = this.node.getComponentInChildren(CommandsMonitor);
+        monitor.add(ChangeHelloWordCMD);
         if (monitor) {
             monitor.execute(TestSayHiCMD);
 
@@ -45,14 +46,14 @@ export default class Helloworld extends cc.Component {
             monitor.execute(ChangeHelloWordCMD, lb);
         }
     }
-    
-    private callTestEmitter():void {
+
+    private callTestEmitter(): void {
         //---test
         Global.Emitter = new Emitter();
-    
+
         Global.Emitter.on(this, EVENTS.TEST_SAY, this.testSayHiA);
         Global.Emitter.on(this, EVENTS.TEST_2, this.testSayHiB);
-        
+
         Global.Emitter.off(this, EVENTS.TEST_SAY, this.testSayHiA);
         Global.Emitter.on(this, EVENTS.TEST_SAY, this.testSayHiA);
         Global.Emitter.offAll();
@@ -61,12 +62,11 @@ export default class Helloworld extends cc.Component {
         Global.Emitter.on(this, EVENTS.TEST_2, this.testSayHiB);
         Global.Emitter.on(this, EVENTS.TEST_SAY, this.testSayHiA);
 
-
         this.scheduleOnce(() => {
             Global.Emitter.emit(EVENTS.TEST_SAY, 'A');
             Global.Emitter.emit(EVENTS.TEST_2, 'B');
         }, 2);
-    
+
         Global.Emitter.emit(EVENTS.TEST_SAY, 'A');
         //---endtest
     }
@@ -76,13 +76,13 @@ export default class Helloworld extends cc.Component {
         Global.Emitter.off(this, EVENTS.TEST_SAY, this.testSayHiA);
     }
 
-    
+
     private testSayHiB(...params: any[]): void {
         console.log("test    hi " + params[0]);
         //Global.Emitter.off(this, EVENTS.TEST_SAY, this.testSayHi);
     }
 
-    
+
     private testSayHi2(...params: any[]): void {
         console.log("test    hi " + params[0]);
         //Global.Emitter.off(this, EVENTS.TEST_SAY, this.testSayHi);

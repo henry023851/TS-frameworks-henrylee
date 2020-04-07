@@ -25,7 +25,7 @@ export default class Observer implements IObserver {
             return false;
         }
 
-        this._func.call(this._context, param);
+        this._func.call(this._context, ...param);
         return true;
     }
 
