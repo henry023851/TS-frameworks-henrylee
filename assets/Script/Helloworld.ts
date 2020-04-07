@@ -36,22 +36,21 @@ export default class Helloworld extends cc.Component {
         //---test
         Global.Emitter = new Emitter();
     
-        Global.Emitter.on(this, EVENTS.TEST_SAY, this.testSayHi);
-        Global.Emitter.on(this, EVENTS.TEST_2, this.testSayHi);
+        Global.Emitter.on(this, EVENTS.TEST_SAY, this.testSayHiA);
+        Global.Emitter.on(this, EVENTS.TEST_2, this.testSayHiB);
         //console.log();//Global.Emitter.listeners
         
-        Global.Emitter.off(this, EVENTS.TEST_SAY, this.testSayHi);
-        Global.Emitter.on(this, EVENTS.TEST_SAY, this.testSayHi);
+        Global.Emitter.off(this, EVENTS.TEST_SAY, this.testSayHiA);
+        Global.Emitter.on(this, EVENTS.TEST_SAY, this.testSayHiA);
         Global.Emitter.offAll();
 
-        Global.Emitter.on(this, EVENTS.TEST_SAY, this.testSayHi);
-        Global.Emitter.on(this, EVENTS.TEST_2, this.testSayHi);
-        Global.Emitter.on(this, EVENTS.TEST_SAY, this.testSayHi);
+        Global.Emitter.on(this, EVENTS.TEST_SAY, this.testSayHiA);
+        Global.Emitter.on(this, EVENTS.TEST_2, this.testSayHiB);
+        Global.Emitter.on(this, EVENTS.TEST_SAY, this.testSayHiA);
 
 
         this.scheduleOnce(() => {
-            Global.Emitter.off(this, EVENTS.TEST_SAY, this.testSayHi);
-
+            Global.Emitter.emit(EVENTS.TEST_SAY, 'A');
             Global.Emitter.emit(EVENTS.TEST_2, 'B');
         }, 2);
     
@@ -59,7 +58,20 @@ export default class Helloworld extends cc.Component {
         //---endtest
     }
 
-    private testSayHi(...params: any[]): void {
+    private testSayHiA(...params: any[]): void {
         console.log("test    hi " + params[0]);
+        Global.Emitter.off(this, EVENTS.TEST_SAY, this.testSayHiA);
+    }
+
+    
+    private testSayHiB(...params: any[]): void {
+        console.log("test    hi " + params[0]);
+        //Global.Emitter.off(this, EVENTS.TEST_SAY, this.testSayHi);
+    }
+
+    
+    private testSayHi2(...params: any[]): void {
+        console.log("test    hi " + params[0]);
+        //Global.Emitter.off(this, EVENTS.TEST_SAY, this.testSayHi);
     }
 }
