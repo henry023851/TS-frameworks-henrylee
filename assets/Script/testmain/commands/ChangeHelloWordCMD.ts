@@ -1,12 +1,14 @@
-import ICommand from "../../frameworkHL/interface/ICommand";
+import BaseCommand from "../../frameworkHL/command/BaseCommand";
 
 const { ccclass, property } = cc._decorator;
 
+
+
+
 @ccclass
-export default class ChangeHelloWordCMD extends cc.Component implements ICommand {
+export default class ChangeHelloWordCMD extends BaseCommand {
 
     init(...params: any[]): void {
-        //throw new Error("Method not implemented.");
     }
 
     execute(...param: any[]): Boolean {

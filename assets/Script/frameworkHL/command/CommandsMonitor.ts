@@ -1,5 +1,6 @@
 import ICommand from "../interface/ICommand";
 import StrictMap from "../util/StrictMap";
+import BaseCommand from "./BaseCommand";
 
 const { ccclass, property } = cc._decorator;
 
@@ -15,10 +16,11 @@ export default class CommandsMonitor extends cc.Component {
 
     /**供编辑器外部绑定Commands */
     @property({
-        type: [cc.Component],
-        tooltip: "编辑器绑定Command"
+        type: [BaseCommand],
+        tooltip: "编辑器绑定Command",
+        displayName: "Commands"
     })
-    bindCMD: cc.Component[] = [];
+    bindCMD: BaseCommand[] = [];
 
     /**严格要求存储对象类型 */
     private _cmdMap: StrictMap<ICommand> = null;
@@ -38,10 +40,10 @@ export default class CommandsMonitor extends cc.Component {
     private retrieveCmd(): void {
         let n: number = this.bindCMD.length;
         while (--n > -1) {
-            const cmd: cc.Component = this.bindCMD[n];
+            const cmd = this.bindCMD[n];
             const type: string = cmd.node.name;
             if (cmd && "" != type) {
-                this._cmdMap.put(type, cmd as unknown as ICommand);
+                this._cmdMap.put(type, cmd);
                 console.log("add command: " + type);
             }
         }
@@ -50,8 +52,7 @@ export default class CommandsMonitor extends cc.Component {
     /**加载Command */
     public add<T extends ICommand>(command: { new(): T }): T {
         const cmd = new command();
-        cmd.init();
-        this._cmdMap.put(command.name, cmd)
+        this._cmdMap.put(command.name, cmd);
         console.log("add command: " + (command.name));
         return cmd;
     }
@@ -64,12 +65,13 @@ export default class CommandsMonitor extends cc.Component {
         return (cmd as T);
     }
 
+    /**执行Command */
     public execute<T extends ICommand>(command: { new(): T }, ...param: any[]): Boolean {
         const type = command.name;
         const cmd = this._cmdMap.get(type);
-        const bool = (cmd && cmd.execute(...param));
-        console.log("execute command: " + type + " " + bool);
-        return bool;
+        const bRlt = (cmd && cmd.execute(...param));
+        console.log("execute command: " + type + " " + bRlt);
+        return bRlt;
     }
 
     public clear(): void {
