@@ -59,7 +59,7 @@ export default class Emitter implements IDestroyable {
         //遍历过程中如果有插入和删除操作，会造成逻辑混乱，所以复制一份
         const arr: IObserver[] = observers.concat();
         arr.forEach(observer => {
-            observer.execute(params);
+            observer.execute(...params);
         });
     }
 

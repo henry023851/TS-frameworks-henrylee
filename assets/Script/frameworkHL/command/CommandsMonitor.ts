@@ -16,9 +16,9 @@ export default class CommandsMonitor extends cc.Component {
     /**供编辑器外部绑定Commands */
     @property({
         type: [cc.Component],
-        tooltip: "Bind commands"
+        tooltip: "编辑器绑定Command"
     })
-    mapComm: any[] = [];
+    bindCMD: cc.Component[] = [];
 
     /**严格要求存储对象类型 */
     private _cmdMap: StrictMap<ICommand> = null;
@@ -36,12 +36,12 @@ export default class CommandsMonitor extends cc.Component {
 
     /**把编辑器绑定的Command重新注册一遍 */
     private retrieveCmd(): void {
-        let n: number = this.mapComm.length;
+        let n: number = this.bindCMD.length;
         while (--n > -1) {
-            const cmd = this.mapComm[n];
-            const type: string = (cmd as cc.Component).node.name;
+            const cmd: cc.Component = this.bindCMD[n];
+            const type: string = cmd.node.name;
             if (cmd && "" != type) {
-                this._cmdMap.put(type, cmd);
+                this._cmdMap.put(type, cmd as unknown as ICommand);
                 console.log("add command: " + type);
             }
         }
@@ -79,6 +79,6 @@ export default class CommandsMonitor extends cc.Component {
     public onDestroy(): void {
         super.onDestroy();
         this.clear();
-        this.mapComm = [];
+        this.bindCMD = [];
     }
 }
