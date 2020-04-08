@@ -17,10 +17,10 @@
         "__id__": 2
       },
       {
-        "__id__": 6
+        "__id__": 21
       },
       {
-        "__id__": 21
+        "__id__": 6
       }
     ],
     "_active": true,
@@ -228,18 +228,18 @@
     "_id": "6dG8VPI6VP8oY0OvbK2ZuR"
   },
   {
-    "__type__": "85e84dT9LVANJY4rQag5X4o",
+    "__type__": "53e21JN5LhEDomQUFFJDYs0",
     "_name": "",
     "_objFlags": 0,
     "node": {
       "__id__": 6
     },
     "_enabled": true,
-    "_id": "1aHIZ1dOVE4ZqnJdhtHdIr"
+    "_id": "3fnbuHtn1IepYoIfhM3dgZ"
   },
   {
     "__type__": "cc.Node",
-    "_name": "ChangeHelloWordCMD",
+    "_name": "TestSayHiCMD",
     "_objFlags": 0,
     "_parent": {
       "__id__": 1
@@ -297,7 +297,7 @@
     "_is3DNode": false,
     "_groupIndex": 0,
     "groupIndex": 0,
-    "_id": "c0mF1UyzVMGLG9StVwfHpJ"
+    "_id": "5bDlSX7YxNt7vWK1KINEau"
   },
   {
     "__type__": "cc.Node",
@@ -852,7 +852,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "TestSayHiCMD",
+    "_name": "ChangeHelloWordCMD",
     "_objFlags": 0,
     "_parent": {
       "__id__": 1
@@ -910,16 +910,16 @@
     "_is3DNode": false,
     "_groupIndex": 0,
     "groupIndex": 0,
-    "_id": "5bDlSX7YxNt7vWK1KINEau"
+    "_id": "c0mF1UyzVMGLG9StVwfHpJ"
   },
   {
-    "__type__": "53e21JN5LhEDomQUFFJDYs0",
+    "__type__": "85e84dT9LVANJY4rQag5X4o",
     "_name": "",
     "_objFlags": 0,
     "node": {
       "__id__": 21
     },
     "_enabled": true,
-    "_id": "3fnbuHtn1IepYoIfhM3dgZ"
+    "_id": "1aHIZ1dOVE4ZqnJdhtHdIr"
   }
 ]
