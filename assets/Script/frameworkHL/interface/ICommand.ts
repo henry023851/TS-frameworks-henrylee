@@ -10,5 +10,5 @@ export default interface ICommand extends IDestroyable {
     /**实例化时被调用一次 */
     init(...params: any[]): void;
     
-    execute(...param: any[]): Boolean;
+    execute(...params: any[]): Boolean;
 }

@@ -1,5 +1,6 @@
 import ICommand from "../interface/ICommand";
-import InfoMSG from "../comm/InfoMSG";
+import TypeClass from "../comm/TypeClass";
+import { ErrorMSG } from "../comm/ErrorMSG";
 
 const { ccclass, property } = cc._decorator;
 
@@ -20,10 +21,18 @@ export default abstract class BaseCommand extends cc.Component implements IComma
 
     /**实例化时被调用一次 */
     init(...params: any[]): void {
-        console.log("CMD<" + this.name + "> hasInit!");
+        //console.log("CMD<" + this.name + "> hasInit!");
     }
 
-    execute(...param: any[]): Boolean {
-        throw new Error(InfoMSG.ABSTRACT_CLASS_INIT);
+    execute(...params: any[]): Boolean {
+        throw new Error(ErrorMSG.ABSTRACT_CLASS_INIT);
+    }
+
+    destroy(): boolean {
+        return super.destroy();
+    }
+
+    onDestroy(): void {
+        console.log(TypeClass.getType(this.constructor) + " onDestroy()!");
     }
 }

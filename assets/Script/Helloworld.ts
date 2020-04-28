@@ -11,7 +11,8 @@ export class Global {
 
 export enum EVENTS {
     TEST_SAY = 'TEST_SAY',
-    TEST_2 = 'TEST_2'
+    TEST_2 = 'TEST_2',
+    TEST_MORE = 'TEST_MORE'
 }
 
 
@@ -22,7 +23,7 @@ export default class Helloworld extends cc.Component {
     label: cc.Label = null;
 
     @property
-    text: string = 'hello';
+    text: string = 'hello   ddddd';
 
     start() {
         // init logic
@@ -30,13 +31,23 @@ export default class Helloworld extends cc.Component {
 
 
         const self = this;
-        this.scheduleOnce(() => {
-            // self.callTestEmitter();
-            self.delayTestCommands();
-        }, 1);
+        //this.scheduleOnce(() => {
+        self.callTestEmitter();
+        //self.delayTestCommands();
+        //}, 2);
+
+        Set
     }
 
     private delayTestCommands(): void {
+
+        // console.log("---------" + TypeClass.getType(CommandsMonitor));
+        // console.log("---------" + TypeClass.getType(TestSayHiCMD));
+        // console.log("---------" + TypeClass.getType(ChangeHelloWordCMD));
+        const testMapKey = {};
+        testMapKey[CommandsMonitor.toString()] = new CommandsMonitor();
+
+
         const monitor = this.node.getComponentInChildren(CommandsMonitor);
         monitor.add(ChangeHelloWordCMD);
         if (monitor) {
@@ -45,6 +56,8 @@ export default class Helloworld extends cc.Component {
             const lb = this.node.getComponentInChildren(cc.Label);
             monitor.execute(ChangeHelloWordCMD, lb);
         }
+
+        //monitor
     }
 
     private callTestEmitter(): void {
@@ -53,38 +66,32 @@ export default class Helloworld extends cc.Component {
 
         Global.Emitter.on(this, EVENTS.TEST_SAY, this.testSayHiA);
         Global.Emitter.on(this, EVENTS.TEST_2, this.testSayHiB);
+        Global.Emitter.on(this, EVENTS.TEST_MORE, this.testMore);
+        Global.Emitter.on(this, EVENTS.TEST_SAY, this.testSayHi2);
 
-        Global.Emitter.off(this, EVENTS.TEST_SAY, this.testSayHiA);
-        Global.Emitter.on(this, EVENTS.TEST_SAY, this.testSayHiA);
-        Global.Emitter.offAll();
-
-        Global.Emitter.on(this, EVENTS.TEST_SAY, this.testSayHiA);
-        Global.Emitter.on(this, EVENTS.TEST_2, this.testSayHiB);
-        Global.Emitter.on(this, EVENTS.TEST_SAY, this.testSayHiA);
-
-        this.scheduleOnce(() => {
-            Global.Emitter.emit(EVENTS.TEST_SAY, 'A');
-            Global.Emitter.emit(EVENTS.TEST_2, 'B');
-        }, 2);
-
-        Global.Emitter.emit(EVENTS.TEST_SAY, 'A');
         //---endtest
     }
 
     private testSayHiA(...params: any[]): void {
-        console.log("test    hi " + params[0]);
+        console.log("testSayHiA    hi " + params[1]);
+        //Global.Emitter.off(this, EVENTS.TEST_SAY, this.testSayHiA);
+    }
+
+
+    public testSayHiB(...params: any[]): void {
+        console.log("testSayHiB    hi " + params[1]);
         Global.Emitter.off(this, EVENTS.TEST_SAY, this.testSayHiA);
     }
 
 
-    private testSayHiB(...params: any[]): void {
-        console.log("test    hi " + params[0]);
+    private testMore(...params: any[]): void {
+        console.log("testMore    more " + params[1]);
         //Global.Emitter.off(this, EVENTS.TEST_SAY, this.testSayHi);
     }
 
 
     private testSayHi2(...params: any[]): void {
-        console.log("test    hi " + params[0]);
+        console.log("testSayHi2    hi " + params[1]);
         //Global.Emitter.off(this, EVENTS.TEST_SAY, this.testSayHi);
     }
 }

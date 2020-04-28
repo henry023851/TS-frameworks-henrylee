@@ -1,6 +1,6 @@
-import ICommand from "../interface/ICommand";
 import StrictMap from "../util/StrictMap";
 import BaseCommand from "./BaseCommand";
+import TypeClass from "../comm/TypeClass";
 
 const { ccclass, property } = cc._decorator;
 
@@ -23,12 +23,12 @@ export default class CommandsMonitor extends cc.Component {
     bindCMD: BaseCommand[] = [];
 
     /**严格要求存储对象类型 */
-    private _cmdMap: StrictMap<ICommand> = null;
+    private _cmdMap: StrictMap<BaseCommand> = null;
 
     public constructor() {
         super();
 
-        this._cmdMap = new StrictMap<ICommand>();
+        this._cmdMap = new StrictMap<BaseCommand>();
     }
 
     /**重新绑定一次Command */
@@ -41,45 +41,46 @@ export default class CommandsMonitor extends cc.Component {
         let n: number = this.bindCMD.length;
         while (--n > -1) {
             const cmd = this.bindCMD[n];
-            const type: string = cmd.node.name;
+            //cmd是实例，获取构造函数作为参数
+            const type: string = TypeClass.getType(cmd.constructor);
             if (cmd && "" != type) {
-                this._cmdMap.put(type, cmd);
-                console.log("add command: " + type);
+                this._cmdMap.set(type, cmd);
             }
         }
     }
 
     /**加载Command */
-    public add<T extends ICommand>(command: { new(): T }): T {
-        const cmd = new command();
-        this._cmdMap.put(command.name, cmd);
-        console.log("add command: " + (command.name));
-        return cmd;
+    //可以优化为类似注册观察者的方案，通过键值对来存储和访问
+    public add(command: { new(): BaseCommand }): void {
+        this._cmdMap.set(TypeClass.getType(command), new command());
     }
 
     /**卸载Command */
-    public remove<T extends ICommand>(command: { new(): T }): T {
-        const type = command.name;
+    public remove(command: { new(): BaseCommand }): BaseCommand {
+        const type = TypeClass.getType(command);
         const cmd = this._cmdMap.delete(type);
-        console.log("remove command: " + type);
-        return (cmd as T);
+        return cmd;
     }
 
     /**执行Command */
-    public execute<T extends ICommand>(command: { new(): T }, ...param: any[]): Boolean {
-        const type = command.name;
+    public execute(command: { new(): BaseCommand }, ...param: any[]): Boolean {
+        const type = TypeClass.getType(command);
         const cmd = this._cmdMap.get(type);
         const bRlt = (cmd && cmd.execute(...param));
-        console.log("execute command: " + type + " " + bRlt);
         return bRlt;
     }
 
     public clear(): void {
+        const _mpg = this._cmdMap.getAllVals();
+        for (const key in _mpg) {
+            if (_mpg.hasOwnProperty(key)) {
+                _mpg[key].destroy();
+            }
+        }
         this._cmdMap.clear();
     }
 
     public onDestroy(): void {
-        super.onDestroy();
         this.clear();
         this.bindCMD = [];
     }
