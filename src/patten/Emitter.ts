@@ -1,11 +1,12 @@
 import IDestroyable from "./IDestroyable";
+import Pool from "./Pool";
 
 /**
  * 定义联合类型 string | number
  * 消息的类型可以是string也可以是number
  * 定义number类型的消息要注意避免冲突，最好是集中管理消息定义
  */
-export type KEYS_UNION = string | number;
+type U_EVENT_KEY_TYPE = string | number;
 
 /**
  * IObserver
@@ -15,6 +16,7 @@ export type KEYS_UNION = string | number;
  */
 export interface IObserver extends IDestroyable {
     execute(...param: any[]): boolean;
+    clear(): void;
     context(): any;
 }
 
@@ -33,21 +35,21 @@ export interface IObserver extends IDestroyable {
  */
 export default class Emitter implements IDestroyable {
 
-    private _listeners: { [key in KEYS_UNION]: IObserver[] } = null;
+    private _listeners: { [key in U_EVENT_KEY_TYPE]: IObserver[] } = null;
 
     constructor() {
         this._listeners = {};
     }
 
     /**注册一个观察者 */
-    public on(context: any, event: number | string, func: (...param: any[]) => void): boolean {
-        if (null == context || null == func) {
+    public on(context: any, event: U_EVENT_KEY_TYPE, func: (...param: any[]) => void): boolean {
+        if (null === context || null === func) {
             return false;
         }
 
         const observers: IObserver[] = this._listeners[event];
         //检查是否有同类型的侦听器组
-        if (null == observers) {
+        if (null === observers) {
             this._listeners[event] = [Observer.create(context, func)];
         } else {
             //检查是否同一个context已经注册过同类型侦听器
@@ -64,9 +66,9 @@ export default class Emitter implements IDestroyable {
     }
 
     /**移除一个观察者 */
-    public off(context: any, event: number | string): void {
+    public off(context: any, event: U_EVENT_KEY_TYPE): void {
         const observers: IObserver[] = this._listeners[event];
-        if (!observers) return;
+        if (null === observers || undefined === observers) return;
 
         let n: number = observers.length;
         while (--n > -1) {
@@ -83,9 +85,9 @@ export default class Emitter implements IDestroyable {
     }
 
     /**触发消息 */
-    public emit(event: number | string, ...params: any[]): void {
+    public emit(event: U_EVENT_KEY_TYPE, ...params: any[]): void {
         const observers: IObserver[] = this._listeners[event];
-        if (!observers) return;
+        if (null === observers || undefined === observers) return;
 
         //遍历过程中如果有插入和删除操作，会造成逻辑混乱，所以临时复制一份
         const array: IObserver[] = observers.concat();
@@ -100,7 +102,8 @@ export default class Emitter implements IDestroyable {
             if (this._listeners.hasOwnProperty(key)) {
                 const array: IObserver[] = this._listeners[key];
                 array.forEach(observer => {
-                    observer.destroy();
+                    observer.clear();
+                    Observer.recover(observer);
                 });
             }
         }
@@ -119,20 +122,32 @@ export default class Emitter implements IDestroyable {
  * @date 2020.04.03   create
  */
 export class Observer implements IObserver {
+
+    /**存取键值 */
+    private static POOL_SKEY: string = "__Emitter::Observer__";
+
     private _context: any = null;
     private _func: (...param: any[]) => void = null;
 
     /**请使用create方法来创建Observer */
     public static create(context: any, func: (...param: any[]) => void): Observer {
-        if (null == context || null == func) {
+        if (null === context || null === func) {
             return null;
         }
 
-        const observer = new Observer();
+        const observer:Observer = Pool.getItemByClass(Observer.POOL_SKEY, Observer);
         observer._func = func;
         observer._context = context;
         func.bind(context);
         return observer;
+    }
+
+    /**
+     * 回收对象
+     * @param oberver 
+     */
+    public static recover(oberver: IObserver): void {
+        Pool.recover(Observer.POOL_SKEY, oberver);
     }
 
     public execute(...param: any[]): boolean {
@@ -144,8 +159,12 @@ export class Observer implements IObserver {
         return this._context;
     }
 
-    public destroy(): void {
+    public clear(): void {
         this._context = null;
         this._func = null;
+    }
+
+    public destroy(): void {
+        this.clear();
     }
 }
