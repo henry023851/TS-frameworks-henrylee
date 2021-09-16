@@ -6,7 +6,7 @@ import Pool from "./Pool";
  * 消息的类型可以是string也可以是number
  * 定义number类型的消息要注意避免ID冲突，最好是集中管理所有消息定义
  */
-type U_EVENT_KEY_TYPE = string | number;
+type U_EVENT_SIGN_TYPE = string | number;
 
 /**
  * IObserver
@@ -25,8 +25,8 @@ export interface IObserver extends IDestroyable {
  * @author henry lee
  * @date 2020.4.3
  */
-export class Emitter implements IDestroyable {
-  private _listeners: { [key in U_EVENT_KEY_TYPE]: IObserver[] } = null;
+export default class Emitter implements IDestroyable {
+  private _listeners: { [key in U_EVENT_SIGN_TYPE]: IObserver[] } = null;
 
   constructor() {
     this._listeners = {};
@@ -39,12 +39,12 @@ export class Emitter implements IDestroyable {
    * @param func
    * @returns true 创建成功    false已经有一个同类型的
    */
-  public on(event: U_EVENT_KEY_TYPE, context: any, func: Function): boolean {
+  public on(event: U_EVENT_SIGN_TYPE, context: any, func: Function): boolean {
     if (null === context || null === func) {
       return false;
     }
 
-    const observers: IObserver[] = this.getObserversByType(event);
+    const observers: IObserver[] = this.getObserversBySign(event);
     const len: number = observers.length;
     for (let index = 0; index < len; index++) {
       //检查是否同一个context已经注册过同类型侦听器
@@ -61,8 +61,8 @@ export class Emitter implements IDestroyable {
    * @param context
    * @param event
    */
-  public off(event: U_EVENT_KEY_TYPE, context: any): void {
-    const observers: IObserver[] = this.getObserversByType(event);
+  public off(event: U_EVENT_SIGN_TYPE, context: any): void {
+    const observers: IObserver[] = this.getObserversBySign(event);
     let n: number = observers.length;
     while (--n > -1) {
       let observer = observers[n];
@@ -80,9 +80,9 @@ export class Emitter implements IDestroyable {
    * @param event
    * @param params
    */
-  public emit(event: U_EVENT_KEY_TYPE, ...params: any[]): void {
-    const observers: IObserver[] = this.getObserversByType(event);
-    //遍历过程中如果有插入和删除操作，会造成逻辑混乱，所以临时复制一份
+  public emit(event: U_EVENT_SIGN_TYPE, ...params: any[]): void {
+    const observers: IObserver[] = this.getObserversBySign(event);
+    //复制一份再遍历
     const array: IObserver[] = observers.concat();
     array.forEach((observer) => {
       observer.execute(event, ...params);
@@ -94,20 +94,18 @@ export class Emitter implements IDestroyable {
    * @param event
    * @returns
    */
-  private getObserversByType(event: U_EVENT_KEY_TYPE): IObserver[] {
+  public getObserversBySign(event: U_EVENT_SIGN_TYPE): IObserver[] {
     return this._listeners[event] || (this._listeners[event] = []);
   }
 
   /**移除所有观察者 */
   public offAll(): void {
     for (let key in this._listeners) {
-      if (this._listeners.hasOwnProperty(key)) {
-        const array: IObserver[] = this._listeners[key];
-        array.forEach((observer) => {
-          observer.clear();
-          Observer.recover(observer);
-        });
-      }
+      const array: IObserver[] = this._listeners[key];
+      array.forEach((observer) => {
+        observer.clear();
+        Observer.recover(observer);
+      });
     }
     this._listeners = {};
   }
@@ -125,7 +123,7 @@ export class Emitter implements IDestroyable {
  */
 export class Observer implements IObserver {
   /**存取键值 */
-  public static POOL_SKEY: string = "PoolEmitterObserver";
+  public static POOL_SIGN: string = "PoolEmitterObserver";
 
   private _context: any = null;
   private _func: Function = null;
@@ -143,7 +141,7 @@ export class Observer implements IObserver {
     }
 
     const observer: Observer = Pool.getItemByClass(
-      Observer.POOL_SKEY,
+      Observer.POOL_SIGN,
       Observer
     );
     observer._func = func;
@@ -157,7 +155,7 @@ export class Observer implements IObserver {
    * @param oberver
    */
   public static recover(oberver: IObserver): void {
-    Pool.recover(Observer.POOL_SKEY, oberver);
+    Pool.recover(Observer.POOL_SIGN, oberver);
   }
 
   public execute(...param: any[]): boolean {
