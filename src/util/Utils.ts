@@ -1,13 +1,3 @@
-/*
- //class类型传参参考
- public static getItemByClass<T>(sign: string, cls: { new(): T }): T {
-     const pool: T[] = Pool.getPoolBySign(sign);
-     const rst: T = pool.length ? pool.pop() : (new cls());
-     return rst;
- }
-*/
-export type TYPE_CLASS<T> = { new (): T };
-
 /**
  * 计算两点角度(rotation)
  * @param px1

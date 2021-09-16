@@ -12,7 +12,7 @@ export default class Pool {
    * @return 对象池。
    */
   public static getPoolBySign(sign: string): any[] {
-    return (Pool._poolDic[sign] || (Pool._poolDic[sign] = []));
+    return Pool._poolDic[sign] || (Pool._poolDic[sign] = []);
   }
 
   /**
@@ -41,7 +41,7 @@ export default class Pool {
    */
   public static getItemByClass<T>(
     sign: string,
-    cls: { new (...params: any[]): T }
+    cls: { new(...params: any[]): T }
   ): T {
     const pool: T[] = Pool.getPoolBySign(sign);
     const rst: T = pool.length ? pool.pop() : new cls();

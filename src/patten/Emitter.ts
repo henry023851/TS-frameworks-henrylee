@@ -67,7 +67,7 @@ export class Emitter implements IDestroyable {
     while (--n > -1) {
       let observer = observers[n];
       if (observer.context() === context) {
-        const observer: IObserver = observers.splice(n, 1)[0];
+        observers.splice(n, 1);
         observer.clear();
         Observer.recover(observer);
         break;
