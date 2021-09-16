@@ -1,6 +1,7 @@
 {
+  "mudoule": "esnext",
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "ESNext",
     "lib": [ "es2015", "es2017", "dom" ],
     "target": "es5",
     "experimentalDecorators": true,
