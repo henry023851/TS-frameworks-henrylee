@@ -1,9 +1,9 @@
 //测试Emitter
 var expect = require('chai').expect;
 var assert = require('better-assert');
-var Emitter = require('../src/patten/Emitter.js').Emitter;
-var Observer = require('../src/patten/Emitter.js').Observer;
-var Pool = require('../src/patten/Pool.js');
+var Emitter = require('../src/pattern/Emitter.js').Emitter;
+var Observer = require('../src/pattern/Emitter.js').Observer;
+var Pool = require('../src/pattern/Pool.js');
 
 var emitter = new Emitter();
 
