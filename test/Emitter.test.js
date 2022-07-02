@@ -15,6 +15,7 @@ const TEST_EVENT_3 = "30000";
 const TEST_EVENT_4 = "40000";
 const TEST_EVENT_5 = "50000";
 
+//sd
 describe('测试Emitter', function () {
     describe('测试事件类型：string | number', function () {
         it('SIGN typeof string', function (done1) {
